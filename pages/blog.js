@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Card, Form, Input, Select, Radio } from "antd";
+import { Button, Card, Form, Input, Select, Radio, message } from "antd";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Loader from "../components/Loader";
@@ -21,6 +21,7 @@ export default function Blog() {
   const [deleteTarget, setDeleteTarget] = useState();
   const [editTarget, setEditTarget] = useState();
   const [editFormVisibility, setEditFormVisibility] = useState(false);
+
   async function loadPosts() {
     setLoading(true);
     axios
@@ -46,17 +47,24 @@ export default function Blog() {
 
   async function onSubmit(values) {
     setLoading(true);
-    await axios.post(
-      endpoint,
-      {
-        ...values,
-      },
-      {
-        headers: { Authorization: token },
-      }
-    );
+    try {
+      await axios.post(
+        endpoint,
+        {
+          ...values,
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
 
-    loadPosts();
+      message.success("Your blog has been posted successfully.");
+      loadPosts();
+    } catch (err) {
+      message.error("Oops! Something went wrong while creating a post.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   function deletePost(post) {
@@ -71,11 +79,19 @@ export default function Blog() {
 
   async function handleConfirmDelete(post) {
     setLoading(true);
-    await axios.delete(`${endpoint}/${post._id}`, {
-      headers: { Authorization: token },
-    });
-    setConfirmDeleteVisibility(false);
-    loadPosts();
+    try {
+      await axios.delete(`${endpoint}/${post._id}`, {
+        headers: { Authorization: token },
+      });
+      loadPosts();
+      message.success("The post has been deleted successfully.");
+    } catch (e) {
+      message.error("Oops! Something went wrong. Failed to delete a post.");
+    } finally {
+      setDeleteTarget(undefined);
+      setConfirmDeleteVisibility(false);
+      setLoading(false);
+    }
   }
 
   function editPost(post) {
@@ -85,13 +101,19 @@ export default function Blog() {
 
   async function handleEditPost(id, values) {
     setEditLoading(true);
-    await axios.patch(`${endpoint}/${id}`, values, {
-      headers: { Authorization: token },
-    });
-    setEditLoading(false);
-    setEditFormVisibility(false);
-    setEditTarget(undefined);
-    loadPosts();
+    try {
+      await axios.patch(`${endpoint}/${id}`, values, {
+        headers: { Authorization: token },
+      });
+      loadPosts();
+      message.success("The post has been updated successfully.");
+    } catch (e) {
+      message.error("Opps! Something went wrong. Failed to update the post.");
+    } finally {
+      setEditLoading(false);
+      setEditTarget(undefined);
+      setEditFormVisibility(false);
+    }
   }
 
   return (
