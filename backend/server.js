@@ -15,10 +15,12 @@ function initDb() {
   return mongoose.connect(config.dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: true,
   });
 }
 
 async function initServer() {
+  // Dependencies injection for ease of mocking
   await initDb();
   const models = initModels(mongoose);
   const services = initServices(models);
@@ -29,6 +31,7 @@ async function initServer() {
   const server = express();
   server.use(express.json());
   initRoutes(server, services);
+  // Let Nextjs handle unhandled routes
   server.get("*", (req, res) => {
     return handle(req, res);
   });
