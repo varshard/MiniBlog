@@ -37,7 +37,7 @@ class Posts {
 
     delete updatedPostBody.author;
     const author = decodeAuthor(key);
-    const post = await this.PostModel.findOneAnd(
+    const post = await this.PostModel.findOneAndUpdate(
       { _id: id, author },
       {
         ...updatedPostBody,
