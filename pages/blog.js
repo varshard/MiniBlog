@@ -16,7 +16,7 @@ export default function Blog() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [confirmDeleteVisibility, setConfirmDeleteVisibility] = useState(false);
-  const [deleteId, setDeleteId] = useState();
+  const [deleteTarget, setDeleteTarget] = useState();
   async function loadPosts() {
     setLoading(true);
     axios
@@ -55,18 +55,18 @@ export default function Blog() {
     loadPosts();
   }
 
-  function deletePost(id) {
+  function deletePost(post) {
     setConfirmDeleteVisibility(true);
-    setDeleteId(id);
+    setDeleteTarget(post);
   }
 
   function handleCancel() {
     setConfirmDeleteVisibility(false);
   }
 
-  async function handleConfirmDelete(id) {
+  async function handleConfirmDelete(post) {
     setLoading(true);
-    await axios.delete(`${endpoint}/${id}`, {
+    await axios.delete(`${endpoint}/${post._id}`, {
       headers: { Authorization: token },
     });
     setConfirmDeleteVisibility(false);
@@ -76,7 +76,7 @@ export default function Blog() {
   return (
     <>
       <ConfirmDeletePostModal
-        postId={deleteId}
+        post={deleteTarget}
         visible={confirmDeleteVisibility}
         handleCancel={handleCancel}
         handleOk={handleConfirmDelete}

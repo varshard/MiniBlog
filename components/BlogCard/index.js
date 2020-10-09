@@ -33,7 +33,7 @@ export default function BlogCard({ card, deletePost }) {
                 icon={faTrashAlt}
                 size="1x"
                 onClick={() => {
-                  deletePost(card._id);
+                  deletePost(card);
                 }}
                 style={{ cursor: "pointer" }}
               />

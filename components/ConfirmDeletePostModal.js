@@ -5,14 +5,14 @@ export default function ConfirmDeletePostModal({
   visible,
   handleOk,
   handleCancel,
-  postId,
+  post,
 }) {
   return (
     <Modal
       title="Confirm deleting a post"
       visible={visible}
       onOk={() => {
-        handleOk(postId);
+        handleOk(post);
       }}
       onCancel={handleCancel}
     >
