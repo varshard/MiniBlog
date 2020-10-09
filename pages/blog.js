@@ -5,6 +5,7 @@ import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Loader from "../components/Loader";
 import Cards from "../components/Cards";
+import ConfirmDeletePostModal from "../components/ConfirmDeletePostModal";
 const { Item } = Form;
 const { Option } = Select;
 
@@ -14,26 +15,32 @@ export default function Blog() {
   const [token, setToken] = useState();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [confirmDeleteVisibility, setConfirmDeleteVisibility] = useState(false);
+  const [deleteId, setDeleteId] = useState();
   async function loadPosts() {
     setLoading(true);
-    try {
-      const resp = await axios.get(endpoint);
-      setPosts(resp.data.posts);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    axios
+      .get(endpoint, {
+        headers: { Authorization: token },
+      })
+      .then((resp) => {
+        setPosts(resp.data.posts);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
 
     loadPosts();
-  }, []);
+  }, [token]);
 
   async function onSubmit(values) {
-    console.log("values", values);
     setLoading(true);
     await axios.post(
       endpoint,
@@ -48,8 +55,32 @@ export default function Blog() {
     loadPosts();
   }
 
+  function deletePost(id) {
+    setConfirmDeleteVisibility(true);
+    setDeleteId(id);
+  }
+
+  function handleCancel() {
+    setConfirmDeleteVisibility(false);
+  }
+
+  async function handleConfirmDelete(id) {
+    setLoading(true);
+    await axios.delete(`${endpoint}/${id}`, {
+      headers: { Authorization: token },
+    });
+    setConfirmDeleteVisibility(false);
+    loadPosts();
+  }
+
   return (
     <>
+      <ConfirmDeletePostModal
+        postId={deleteId}
+        visible={confirmDeleteVisibility}
+        handleCancel={handleCancel}
+        handleOk={handleConfirmDelete}
+      />
       <Card>
         <Form
           onFinish={onSubmit}
@@ -99,7 +130,7 @@ export default function Blog() {
         </Form>
       </Card>
       {loading && <Loader />}
-      {!loading && <Cards cards={posts} />}
+      {!loading && <Cards cards={posts} deletePost={deletePost} />}
     </>
   );
 }

@@ -9,7 +9,6 @@ function validateAuthorization(authorization) {
 }
 
 function decodeAuthor(key) {
-  validateAuthorization(key);
   return atob(key);
 }
 
@@ -18,11 +17,23 @@ class Posts {
     this.PostModel = models.Post;
   }
 
-  getPosts() {
-    return this.PostModel.find().sort({ edited: "desc" }).exec();
+  async getPosts(key) {
+    let author;
+    if (key) {
+      author = decodeAuthor(key);
+    }
+    const posts = await this.PostModel.find().sort({ edited: "desc" }).lean();
+
+    return posts.map((post) => {
+      if (post.author === author) {
+        post.editable = true;
+      }
+      return post;
+    });
   }
 
   async createPost(postPayload, key) {
+    validateAuthorization(key);
     const post = new this.PostModel({
       ...postPayload,
       edited: new Date(),
@@ -36,6 +47,7 @@ class Posts {
     const updatedPostBody = { ...postPayload };
 
     delete updatedPostBody.author;
+    validateAuthorization(key);
     const author = decodeAuthor(key);
     const post = await this.PostModel.findOneAndUpdate(
       { _id: id, author },
@@ -52,6 +64,7 @@ class Posts {
   }
 
   async removePost(id, key) {
+    validateAuthorization(key);
     const author = decodeAuthor(key);
     const post = await this.PostModel.findOneAndRemove({
       _id: id,

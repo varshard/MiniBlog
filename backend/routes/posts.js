@@ -9,7 +9,7 @@ function initRoutes(services) {
 
   router.get("/", async (req, res) => {
     try {
-      const posts = await postService.getPosts();
+      const posts = await postService.getPosts(req.header("Authorization"));
       res.json({ posts });
     } catch (err) {
       res.sendStatus(500);
