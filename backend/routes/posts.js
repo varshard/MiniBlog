@@ -8,8 +8,12 @@ function initRoutes(services) {
   const postService = services.postsService;
 
   router.get("/", async (req, res) => {
-    const posts = await postService.getPosts();
-    res.json(posts);
+    try {
+      const posts = await postService.getPosts();
+      res.json({ posts });
+    } catch (err) {
+      res.sendStatus(500);
+    }
   });
 
   router.post("/", async (req, res) => {

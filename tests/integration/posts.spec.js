@@ -93,6 +93,19 @@ describe("posts", () => {
     });
   });
 
+  describe("GET /posts", () => {
+    it("should get posts successfully", async () => {
+      const resp = await request
+        .get(endpoint)
+        .set("Authorization", "Zm9vYmFy")
+        .expect(200);
+
+      const { body } = resp;
+
+      expect(body.cards.length > 0).toBeTruthy();
+    });
+  });
+
   async function createPost() {
     const resp = await request
       .post(endpoint)

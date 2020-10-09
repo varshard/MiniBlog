@@ -19,7 +19,7 @@ class Posts {
   }
 
   getPosts() {
-    return this.PostModel.find();
+    return this.PostModel.find().sort({ edited: "desc" }).exec();
   }
 
   async createPost(postPayload, key) {

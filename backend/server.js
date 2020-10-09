@@ -28,10 +28,10 @@ async function initServer() {
   }
   const server = express();
   server.use(express.json());
+  initRoutes(server, services);
   server.get("*", (req, res) => {
     return handle(req, res);
   });
-  initRoutes(server, services);
 
   return server;
 }
