@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Loader from "../components/Loader";
 import Cards from "../components/Cards";
 import ConfirmDeletePostModal from "../components/ConfirmDeletePostModal";
+import EditPostModal from "../components/EditPostModal";
 const { Item } = Form;
 const { Option } = Select;
 
@@ -15,8 +16,11 @@ export default function Blog() {
   const [token, setToken] = useState();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
   const [confirmDeleteVisibility, setConfirmDeleteVisibility] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState();
+  const [editTarget, setEditTarget] = useState();
+  const [editFormVisibility, setEditFormVisibility] = useState(false);
   async function loadPosts() {
     setLoading(true);
     axios
@@ -73,8 +77,36 @@ export default function Blog() {
     loadPosts();
   }
 
+  function editPost(post) {
+    setEditTarget(post);
+    setEditFormVisibility(true);
+  }
+
+  async function handleEditPost(id, values) {
+    setEditLoading(true);
+    await axios.patch(`${endpoint}/${id}`, values, {
+      headers: { Authorization: token },
+    });
+    setEditLoading(false);
+    setEditFormVisibility(false);
+    setEditTarget(undefined);
+    loadPosts();
+  }
+
   return (
     <>
+      {editTarget && (
+        <EditPostModal
+          post={editTarget}
+          visible={editFormVisibility}
+          setVisible={setEditFormVisibility}
+          handleOk={handleEditPost}
+          handleCancel={() => {
+            setEditFormVisibility(false);
+          }}
+          loading={editLoading}
+        />
+      )}
       <ConfirmDeletePostModal
         post={deleteTarget}
         visible={confirmDeleteVisibility}
@@ -86,8 +118,8 @@ export default function Blog() {
           onFinish={onSubmit}
           layout="vertical"
           initialValues={{
-            title: "",
-            context: "",
+            name: "",
+            content: "",
             category: "idea",
             status: "green",
           }}
@@ -130,7 +162,9 @@ export default function Blog() {
         </Form>
       </Card>
       {loading && <Loader />}
-      {!loading && <Cards cards={posts} deletePost={deletePost} />}
+      {!loading && (
+        <Cards cards={posts} deletePost={deletePost} editPost={editPost} />
+      )}
     </>
   );
 }

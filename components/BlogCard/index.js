@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Author from "./Author";
 
-export default function BlogCard({ card, deletePost }) {
+export default function BlogCard({ card, deletePost, editPost }) {
   const { editable } = card;
   return (
     <div>
@@ -21,6 +21,9 @@ export default function BlogCard({ card, deletePost }) {
                 icon={faEdit}
                 size="1x"
                 style={{ cursor: "pointer" }}
+                onClick={() => {
+                  editPost(card);
+                }}
               />
             )}
             <FontAwesomeIcon
