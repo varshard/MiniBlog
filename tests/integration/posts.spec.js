@@ -12,6 +12,7 @@ describe("posts", () => {
   });
 
   afterAll(async () => {
+    await mongoose.connection.collections["Post"].drop();
     await mongoose.disconnect();
     server.close();
   });
@@ -102,7 +103,7 @@ describe("posts", () => {
 
       const { body } = resp;
 
-      expect(body.cards.length > 0).toBeTruthy();
+      expect(body.posts.length > 0).toBeTruthy();
     });
   });
 

@@ -66,6 +66,7 @@ export default function Blog() {
 
   function handleCancel() {
     setConfirmDeleteVisibility(false);
+    setDeleteTarget(undefined);
   }
 
   async function handleConfirmDelete(post) {
@@ -107,12 +108,14 @@ export default function Blog() {
           loading={editLoading}
         />
       )}
-      <ConfirmDeletePostModal
-        post={deleteTarget}
-        visible={confirmDeleteVisibility}
-        handleCancel={handleCancel}
-        handleOk={handleConfirmDelete}
-      />
+      {deleteTarget && (
+        <ConfirmDeletePostModal
+          post={deleteTarget}
+          visible={confirmDeleteVisibility}
+          handleCancel={handleCancel}
+          handleOk={handleConfirmDelete}
+        />
+      )}
       <Card>
         <Form
           onFinish={onSubmit}
@@ -163,7 +166,7 @@ export default function Blog() {
       </Card>
       {loading && <Loader />}
       {!loading && (
-        <Cards cards={posts} deletePost={deletePost} editPost={editPost} />
+        <Cards posts={posts} deletePost={deletePost} editPost={editPost} />
       )}
     </>
   );

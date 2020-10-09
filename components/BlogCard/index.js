@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Space } from "antd";
+import { Card, Space, Badge } from "antd";
 import {
   faCircle,
   faEdit,
@@ -8,12 +8,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Author from "./Author";
 
-export default function BlogCard({ card, deletePost, editPost }) {
-  const { editable } = card;
+export default function BlogCard({ post, deletePost, editPost }) {
+  const { editable } = post;
   return (
     <div>
       <Card
-        title={card.name}
+        title={post.name}
         extra={
           <Space>
             {editable && (
@@ -22,13 +22,13 @@ export default function BlogCard({ card, deletePost, editPost }) {
                 size="1x"
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  editPost(card);
+                  editPost(post);
                 }}
               />
             )}
             <FontAwesomeIcon
               icon={faCircle}
-              style={{ color: card.status }}
+              style={{ color: post.status }}
               size="1x"
             />
             {editable && (
@@ -36,7 +36,7 @@ export default function BlogCard({ card, deletePost, editPost }) {
                 icon={faTrashAlt}
                 size="1x"
                 onClick={() => {
-                  deletePost(card);
+                  deletePost(post);
                 }}
                 style={{ cursor: "pointer" }}
               />
@@ -44,8 +44,9 @@ export default function BlogCard({ card, deletePost, editPost }) {
           </Space>
         }
       >
-        <p>{card.content}</p>
-        <Author post={card} />
+        <Badge status="default" text={post.category} />
+        <p>{post.content}</p>
+        <Author post={post} />
       </Card>
     </div>
   );

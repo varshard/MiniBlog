@@ -11,6 +11,7 @@ export default function ConfirmDeletePostModal({
     <Modal
       title="Confirm deleting a post"
       visible={visible}
+      okText="Delete"
       onOk={() => {
         handleOk(post);
       }}
