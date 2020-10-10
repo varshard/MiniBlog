@@ -15,6 +15,7 @@ This project come with Dockerfile and docker-compose. The easiest way to run it 
 #### Development
 
 1. Set variable `DB_URL` to point to a MongoDB.
+1. Set variable `SECRET` to a secret of choice. This value is used to generate a random password.
 1. Execute `npm start`
 
 #### Deployment
@@ -26,19 +27,27 @@ This project come with Dockerfile and docker-compose. The easiest way to run it 
 
 ### Authentication
 
-MiniBlog is using a very basic authentication, by creating a base64 of an entered username from the home page.
-Then this base64 will be used as Authorization header for each request to /posts endpoints.
+MiniBlog is using a very basic authentication. It uses basis authentication by retrieving username and password, then generate a random key with PBKDF2 using the provided username as salt.
+The generated key will be used as Authorization header for each request to the /posts endpoints.
 This base64 will be set to localstorage as `token`.
 
-### CRUDs
+### Endpoints
+
+* POST /register
+
+For registering a new user.
+
+* POST /login
+
+For logging in with a registered credential.
 
 * GET /posts
 
-For retrieving posts. If an authroization header present, it will detect use the token to mark a post that's belong to the author as editable.
+For retrieving posts. If an Authorization header present, it will detect use the token to mark a post that's belong to the author as editable.
 
 * POST /posts
 
-For creating a new post. It accept a JSON of name, context, category, and status.
+For creating a new post. It accepts a JSON of name, context, category, and status.
 
 * DELETE /posts/:id
 

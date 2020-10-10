@@ -1,6 +1,5 @@
-const atob = require("atob");
 const PostNotFound = require("../errors/PostNotFound");
-const UnauthorizedUser = require("../errors/UnauthorizeUser");
+const UnauthorizedUser = require("../errors/UnauthorizedUser");
 
 function validateAuthorization(authorization) {
   if (!authorization || !authorization.trim()) {
@@ -8,24 +7,22 @@ function validateAuthorization(authorization) {
   }
 }
 
-function decodeAuthor(key) {
-  return atob(key);
-}
-
 class Posts {
-  constructor(models) {
+  constructor(models, authentication) {
     this.PostModel = models.Post;
+    this.authentication = authentication;
+  }
+
+  async authenticateKey(key) {
+    return this.authentication.authenticateKey(key);
   }
 
   async getPosts(key) {
-    let author;
-    if (key) {
-      author = decodeAuthor(key);
-    }
     const posts = await this.PostModel.find().sort({ edited: "desc" }).lean();
+    const author = await this.authenticateKey(key);
 
     return posts.map((post) => {
-      if (post.author === author) {
+      if (post.author._id === author._id) {
         post.editable = true;
       }
       return post;
@@ -34,10 +31,14 @@ class Posts {
 
   async createPost(postPayload, key) {
     validateAuthorization(key);
+    const author = await this.authenticateKey(key);
     const post = new this.PostModel({
       ...postPayload,
       edited: new Date(),
-      author: decodeAuthor(key),
+      author: {
+        _id: author._id,
+        name: author.name,
+      },
     });
 
     return post.save();
@@ -48,9 +49,9 @@ class Posts {
 
     delete updatedPostBody.author;
     validateAuthorization(key);
-    const author = decodeAuthor(key);
+    const author = await this.authenticateKey(key);
     const post = await this.PostModel.findOneAndUpdate(
-      { _id: id, author },
+      { _id: id, "author._id": author._id },
       {
         ...updatedPostBody,
         edited: new Date(),
@@ -65,10 +66,10 @@ class Posts {
 
   async removePost(id, key) {
     validateAuthorization(key);
-    const author = decodeAuthor(key);
+    const author = await this.authenticateKey(key);
     const post = await this.PostModel.findOneAndRemove({
       _id: id,
-      author,
+      "author._id": author._id,
     });
     if (!post) {
       throw new PostNotFound();

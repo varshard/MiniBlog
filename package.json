@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node index.js",
     "build": "next build",
-    "test": "jest --runInBand"
+    "test": "SECRET=xxxx DB_URL=mongodb://localhost/miniBlog jest --runInBand"
   },
   "jest": {
     "verbose": true,
@@ -22,9 +22,8 @@
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@zeit/next-css": "^1.0.1",
     "antd": "^4.6.6",
-    "atob": "^2.1.2",
     "axios": "^0.20.0",
-    "btoa": "^1.2.1",
+    "bcrypt": "^5.0.0",
     "express": "^4.17.1",
     "mongoose": "^5.10.8",
     "next": "9.5.3",

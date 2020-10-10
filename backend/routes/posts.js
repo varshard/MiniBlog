@@ -1,7 +1,7 @@
 const express = require("express");
 
 const PostNotFound = require("../errors/PostNotFound");
-const UnauthorizedUser = require("../errors/UnauthorizeUser");
+const UnauthorizedUser = require("../errors/UnauthorizedUser");
 
 function initRoutes(services) {
   const router = express.Router();

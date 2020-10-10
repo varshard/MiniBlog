@@ -1,8 +1,7 @@
-const mongoose = require('mongoose');
-const config = require('../../src/config');
+const mongoose = require("mongoose");
 module.exports = {
-	async truncate() {
-		await mongoose.connect(config.dbUrl, { useNewUrlParser: true });
-		await mongoose.dropDatabase();
-	}
+  async truncate() {
+    await mongoose.connection.collections["Author"].drop();
+    await mongoose.connection.collections["Post"].drop();
+  },
 };

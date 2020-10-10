@@ -15,7 +15,7 @@ function initDb() {
   return mongoose.connect(config.dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: true,
+    useFindAndModify: false,
   });
 }
 
