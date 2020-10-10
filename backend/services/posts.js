@@ -22,7 +22,7 @@ class Posts {
     const author = await this.authenticateKey(key);
 
     return posts.map((post) => {
-      if (post.author._id === author._id) {
+      if (post.author._id.equals(author._id)) {
         post.editable = true;
       }
       return post;
