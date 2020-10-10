@@ -6,7 +6,7 @@ export default function Author({ post }) {
   return (
     <div>
       <Card>
-        <Meta title={post.author} description={post.edited} />
+        <Meta title={post.author.name} description={post.edited} />
       </Card>
     </div>
   );

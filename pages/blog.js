@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Card, Form, Input, Select, Radio, message } from "antd";
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  Select,
+  Radio,
+  message,
+  Layout,
+} from "antd";
+import { useRouter } from "next/router";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Loader from "../components/Loader";
@@ -9,10 +19,12 @@ import ConfirmDeletePostModal from "../components/ConfirmDeletePostModal";
 import EditPostModal from "../components/EditPostModal";
 const { Item } = Form;
 const { Option } = Select;
+const { Header, Content } = Layout;
 
 const endpoint = "/posts";
 
 export default function Blog() {
+  const router = useRouter();
   const [token, setToken] = useState();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -116,6 +128,11 @@ export default function Blog() {
     }
   }
 
+  function logout() {
+    localStorage.setItem("token", undefined);
+    router.push("/");
+  }
+
   return (
     <>
       {editTarget && (
@@ -138,58 +155,80 @@ export default function Blog() {
           handleOk={handleConfirmDelete}
         />
       )}
-      <Card>
-        <Form
-          onFinish={onSubmit}
-          layout="vertical"
-          initialValues={{
-            name: "",
-            content: "",
-            category: "idea",
-            status: "green",
-          }}
-        >
-          <Item label="Title" name="name" rules={[{ required: true }]}>
-            <Input />
-          </Item>
-          <Item
-            label="Write your blog"
-            name="content"
-            rules={[{ required: true }]}
-          >
-            <Input.TextArea />
-          </Item>
-          <Item label="Category" name="category">
-            <Select>
-              <Option value="idea">Idea</Option>
-              <Option value="recipe">Recipe</Option>
-              <Option value="rant">Rant</Option>
-            </Select>
-          </Item>
-          <Item label="Status" name="status">
-            <Radio.Group>
-              <Radio.Button value="green">
-                <FontAwesomeIcon icon={faCircle} style={{ color: "green" }} />
-              </Radio.Button>
-              <Radio.Button value="blue">
-                <FontAwesomeIcon icon={faCircle} style={{ color: "blue" }} />
-              </Radio.Button>
-              <Radio.Button value="red">
-                <FontAwesomeIcon icon={faCircle} style={{ color: "red" }} />
-              </Radio.Button>
-            </Radio.Group>
-          </Item>
-          <Item>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Create
-            </Button>
-          </Item>
-        </Form>
-      </Card>
-      {loading && <Loader />}
-      {!loading && (
-        <Cards posts={posts} deletePost={deletePost} editPost={editPost} />
-      )}
+      <Layout>
+        <Header>
+          <Button onClick={logout}>Log out</Button>
+        </Header>
+        <Layout>
+          <Content>
+            <Card>
+              <Form
+                onFinish={onSubmit}
+                layout="vertical"
+                initialValues={{
+                  name: "",
+                  content: "",
+                  category: "idea",
+                  status: "green",
+                }}
+              >
+                <Item label="Title" name="name" rules={[{ required: true }]}>
+                  <Input />
+                </Item>
+                <Item
+                  label="Write your blog"
+                  name="content"
+                  rules={[{ required: true }]}
+                >
+                  <Input.TextArea />
+                </Item>
+                <Item label="Category" name="category">
+                  <Select>
+                    <Option value="idea">Idea</Option>
+                    <Option value="recipe">Recipe</Option>
+                    <Option value="rant">Rant</Option>
+                  </Select>
+                </Item>
+                <Item label="Status" name="status">
+                  <Radio.Group>
+                    <Radio.Button value="green">
+                      <FontAwesomeIcon
+                        icon={faCircle}
+                        style={{ color: "green" }}
+                      />
+                    </Radio.Button>
+                    <Radio.Button value="blue">
+                      <FontAwesomeIcon
+                        icon={faCircle}
+                        style={{ color: "blue" }}
+                      />
+                    </Radio.Button>
+                    <Radio.Button value="red">
+                      <FontAwesomeIcon
+                        icon={faCircle}
+                        style={{ color: "red" }}
+                      />
+                    </Radio.Button>
+                  </Radio.Group>
+                </Item>
+                <Item>
+                  <Button type="primary" htmlType="submit" loading={loading}>
+                    Create
+                  </Button>
+                </Item>
+              </Form>
+            </Card>
+            {loading && <Loader />}
+            {!loading && (
+              <Cards
+                posts={posts}
+                deletePost={deletePost}
+                editPost={editPost}
+              />
+            )}
+          </Content>
+        </Layout>
+      </Layout>
     </>
   );
 }
