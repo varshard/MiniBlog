@@ -11,7 +11,7 @@ class Authors {
   }
 
   async registerAuthor(name, password) {
-    const authorExist = (await this.AuthorModel.count({ name })) > 0;
+    const authorExist = (await this.AuthorModel.countDocuments({ name })) > 0;
     if (authorExist) {
       throw new UsernameUnavailable();
     }
