@@ -18,6 +18,12 @@ class Authentication {
       .toString("hex");
   }
 
+  /**
+   * Find a user based on username and password
+   * @param username
+   * @param password
+   * @returns {Promise<*>}
+   */
   async authenticate(username, password) {
     const author = await this.AuthorModel.findOne({
       name: username,
@@ -32,6 +38,11 @@ class Authentication {
     return author;
   }
 
+  /**
+   * Find a user based on the provided Authorization header
+   * @param key
+   * @returns {Promise<*>}
+   */
   async authenticateKey(key) {
     const author = await this.AuthorModel.findOne({ key });
     if (!author) {

@@ -29,7 +29,7 @@ This project come with Dockerfile and docker-compose. The easiest way to run it 
 
 MiniBlog is using a very basic authentication. It uses basis authentication by retrieving username and password, then generate a random key with PBKDF2 using the provided username as salt.
 The generated key will be used as Authorization header for each request to the /posts endpoints.
-This base64 will be set to localstorage as `token`.
+This generated key will be set to localstorage as `token`.
 
 ### Endpoints
 
