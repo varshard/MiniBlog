@@ -12,6 +12,9 @@ function initRoutes(services) {
       const posts = await postService.getPosts(req.header("Authorization"));
       res.json({ posts });
     } catch (err) {
+      if (err instanceof UnauthorizedUser) {
+        return res.status(403).send(err.message);
+      }
       res.sendStatus(500);
     }
   });

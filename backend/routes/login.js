@@ -15,8 +15,7 @@ function initRoutes(services) {
       res.json({ token: author.key });
     } catch (err) {
       if (err instanceof UnauthorizedUser) {
-        res.status(403);
-        return res.send(err.message);
+        return res.status(403).send(err.message);
       }
       res.sendStatus(500);
     }
@@ -33,8 +32,7 @@ function initRoutes(services) {
       res.json({ token: author.key });
     } catch (err) {
       if (err instanceof UsernameUnavailable) {
-        res.status(400);
-        return res.send(err.message);
+        return res.status(400).send(err.message);
       }
       res.sendStatus(500);
     }

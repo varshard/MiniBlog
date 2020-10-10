@@ -19,10 +19,13 @@ class Posts {
 
   async getPosts(key) {
     const posts = await this.PostModel.find().sort({ edited: "desc" }).lean();
-    const author = await this.authenticateKey(key);
+    let author;
+    if (key) {
+      author = await this.authenticateKey(key);
+    }
 
     return posts.map((post) => {
-      if (post.author._id.equals(author._id)) {
+      if (author && post.author._id.equals(author._id)) {
         post.editable = true;
       }
       return post;

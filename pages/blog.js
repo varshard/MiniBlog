@@ -43,7 +43,6 @@ export default function Blog() {
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
-
     loadPosts();
   }, [token]);
 
@@ -119,7 +118,7 @@ export default function Blog() {
   }
 
   function logout() {
-    localStorage.setItem("token", undefined);
+    localStorage.removeItem("token");
     router.push("/");
   }
 
